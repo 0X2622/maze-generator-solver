@@ -4,43 +4,40 @@
 #include <vector>
 #include <cstdlib> // for exit() to terminate the program
 #include <iomanip> // for setw() and left (kanske kan ta bort) -> tror inte ja använder detta.
-//#include "mazeSolver.h"
-
-struct MazeNode;
 
 //interface of the main menu
 ////the class menu navigates the flow of the overallt program, have communications with other classes
 // lets the user navigate and use the program and gives the user a visual interface with options.
-
-
 class menu {
 private:
 
-	int inputOption; //will be used for all inputs for the different menus.
+	//maze dimensions
 	int mazeWidth;
 	int mazeHeight;
 
-	//upper and lower bounds for input values
-	int upperBound;
-	int lowerBound;
+	double inputValue; //will be used for all inputs for the different menus.
+	double option1; //control value for the first menu option
+	double option2; //control value for the second menu option.
 
-	bool validInput = false; //used for errorcheck for multiple functions
-	int int_errorFlagBit; // 0 == error, 1 == no error
-	std::string errorMsg_RANGE; //errorMessages. WIll be different depending on function and error.
-	std::string errorMsg_TYPE = "Error: Invalid input type. Make sure to input a value of type integer.";
-	//mazeGenerator* mazeGenInstance;
-
+	//boolean used for errorcheck validation.
+	//sets inital condition to false so that it can be set to true * only* if the input is of a correct type/or value
+	bool validInput = false;
+	
+	int int_errorFlagBit; // data that will give information about the input. 0 == error, 1 == no error
+	
+	//errorMessages used for wrong input value & type
+	std::string errorMsg_Value; //om jag inte använder denna kan ja ta bort den. Kolla om denna verkligen behövs.
+	std::string errorMsg_TYPE = "Error: Invalid input type. Make sure to input a value of type integer."; 
 
 public:
 	menu(); //default constructor 
-	void startMenu(); //visual interface of the startmenu and its options
-	void mazeMenu();
-	int inputMazeDim(std::string dimension);
-	void inputMazeAlg();
-	void input(); 
-	bool inputErrorCheck();
+	void startMenu(); //that menu that contains visual interface & start flow of the program
+	void input(); //method used for validating user input
+	bool inputErrorCheck(); //errorCheck method based on user input
 	void flushBuffer(); //flushes the cin buffer
-	~menu(); //destructor
+	double getInputVal();
+	~menu(); //destructor (kolla om jag verkligen ska lämna detta default eller inte)
+	//~menu() = default;
 
 };
 #endif // !MENU_H

@@ -129,14 +129,12 @@
   <ItemGroup>
     <ClInclude Include="mazeDisplayer.h" />
     <ClInclude Include="mazeGenerator.h" />
-    <ClInclude Include="mazeInterface.h" />
-    <ClInclude Include="mazeSolver.h" />
+    <ClInclude Include="MazeNode.h" />
     <ClInclude Include="menu.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mazeGenerator.cpp" />
-    <ClCompile Include="mazeSolver.cpp" />
     <ClCompile Include="mazeDisplayer.cpp" />
     <ClCompile Include="menu.cpp" />
   </ItemGroup>

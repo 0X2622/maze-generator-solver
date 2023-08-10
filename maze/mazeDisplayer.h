@@ -1,80 +1,54 @@
 #ifndef MAZEDISPLAYER_H
 #define MAZEDISPLAYER_H
 #include <vector>
+#include <iostream>
 
 
-//forward declaration of the mazeSolver class, which is a pointer/reference to the mazeSolver class.
-// by using forward declaration, we can pass in a mazeSolver object that represents the solved maze into 
-// the mazeDisplayer constructor.
 // With forward declaration we declare the clasee mazeSolver before it's complete definition is available.
 // By using forward declaration in this case, we can use the object mazeSolver as a parameter into the constructor
 // without having to include the entire 'mazeSolver.h' file in this class. By doing this we reduce the chance
 // or errors due to dependencies, and also reduce build/compilation time and overhead.
 
 
+//class mazeGenerator;
 
-
-class mazeSolver;
-class mazeGenerator;
+//forward declaration/reference of the struct MazeNode, this allows us to declare MazeNode datatypes in the class
+//without having to include the entire definition.
 struct MazeNode;
 
 
-//template <typename T>
-
-//class used to display the maze that has been generated and solved
-// This class is listed at the highest of the maze hierachy, and can only print out the solved mazes.
+//class used to display the generated datastructure from mazeGenerator which is the 2D matrix and the generated Maze
+// The display will be a visual representation of the generated datastructure
 class mazeDisplayer {
 
 private:
-	//mazeGenerator mazeGenerator;
-	//const MazeVector& mazeVec;
 
-	//const typename mazeGenerator::MazeVector& mazeVec;
+	//datatypes that represents the visual representation of matrix/maze
+	// the purpose of the extended gaps is to make the maze a little bigger and more readable.
+	const std::string Vert_wall = " | ";
+	const std::string Hori_wall = "------"; 
+	const std::string start = " S ";
+	const std::string end = " E ";
+	const std::string RegNode = " * ";
+	const std::string H_path = "     "; 
+	const std::string V_path = "   ";
 
-	//const mazeGenerator::MazeVector& mazeVec;
-
-
-	//mazeSolver& solvedMaze; //reference/pointer to the solved maze object.
-	//mazeGenerator& maze; //reference/pointer to the generated maze datastructure
-	//mazeGenerator::MazeVector& mazeVector; //vector of the maze that will be passed into this class
-
-	char H_wall = '|';
-	char V_wall = '-';
-	char start = 'S'; 
-	char end = 'E'; 
-	char node = '*';
-	char path = ' ';
-
-
-	//inputs::
-	//the generated maze and it's properties and data structures generated from class 'mazeGenerator'
-	// the solved maze and it's data structures from the class 'mazeSolver'
-	// the visual and graphical interface in how the recieved data will be represented on the screen
-
-	//outputs
-	//algorithms for displaying the generated data structures on the screen
+	std::string funType; //will be used in printNodeRow to determine it's behaivour
+	const std::vector<std::vector<MazeNode*>>& mazeVec; //represents the passed in 2Dvector that holds the maze datastructure
 
 public:
+	mazeDisplayer() = delete; //explicitly say that a default ctr is not to be used since the mazeVector is needed as input
 
-	typedef std::vector<std::vector<MazeNode*>> MazeVector;
-//typedef mazeGenerator::MazeVector MazeVec;
-//using MazeVector = mazeGenerator::MazeVector;
+	//constructor that takes in the generated 2D mazeVector as input
+	mazeDisplayer(const std::vector<std::vector<MazeNode*>>& mazeVec);
 
-
-
-	//constructor that takes in a mazeGenerator object as input. By accessing the datastructures of the 
-	//generated maze it can display the maze
-	mazeDisplayer(const MazeVector& mazeVec);
-
-	//void getMazeVec(const mazeGenerator::MazeVector mazeVec);
-	//mazeDisplayer(const MazeVector& mazeVector);
-
-	//method and logic to print the maze, this method will be called by the constructor
-	// this method will access the reference object "solvedMaze" to print the maze. 
-	// since this method is only responsible for printing the maze with no further
-	// computations, it does not need to return a value.
-	void printMaze();
-
+	void printMatrix(); //method that allows the user to see just the 2D matrix structure, with it's nodes and walls.
+	void printMaze(); //method that is used to print the complete generated maze.
+	void printHorisontalWall(); //method for printing a line of horrisontal walls that is used for the matrix top roof.
+	void printNodeRow(const std::vector<MazeNode*>& mazeRow); //prints a row of mazeNodes + walls/paths 
+	void analyzeRightPtr(MazeNode* MazeNode); //analyzes the right ptr of a node to determine if a wall/path should be there
+	void analyzeDownPtr(const std::vector<MazeNode*> mazeRow);//analyzes the down ptr of nodes to generate wall/or path. 
+	~mazeDisplayer();
 };
 
 #endif // !MAZEDISPLAYER_H
