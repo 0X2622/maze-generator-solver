@@ -31,6 +31,7 @@ private:
 
 public:
 	menu(); //default constructor 
+	int DimMenu();
 	void startMenu(); //that menu that contains visual interface & start flow of the program
 	void input(); //method used for validating user input
 	bool inputErrorCheck(); //errorCheck method based on user input

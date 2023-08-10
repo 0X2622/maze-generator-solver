@@ -8,11 +8,18 @@ menu::menu()
 	this->startMenu();
 }
 
+//menu for letting the user to generate a maze of a different dimension,
+int menu::DimMenu()
+{
+	return 0;
+}
+
 void menu::startMenu()
 {
 	std::cout << "Welcome to mazegenerator. Choose one of the following options below: " << std::endl << std::endl;
 	std::cout << "Press 0: To generate a maze by default size and DFS algorithm" << '\n' <<
-				 "Press 1 to: Terminate the program " << '\n' << '\n' << "Input option here: ";
+				 "Press 1 to: Generate a maze of another dimension " << '\n'  <<
+				 "Press 2 to: Terminate the program " << '\n' << '\n' << "Input option here: ";
 
 	// Save current cursor position. By saving its position below the visual menu content (above), 
 	// the cursor will return to this point and not overwrite the visual menu content when reloading the page.
@@ -34,7 +41,10 @@ void menu::startMenu()
 		const std::vector<std::vector<MazeNode*>>& mazeVec = mazeObj.getMazeVector(); //create a reference to the mazeVector
 		mazeDisplayer displayer(mazeVec); //pass the mazeVector into the class mazeDisplayer to print the maze
 	}
-	else if (inputValue == 1) { //if user effectively chose option 1
+	else if (inputValue == 1) { //if user chose option 1
+		int dimension = DimMenu(); //returns integer that tells which dimension that is to be used for the maze
+	}
+	else if (inputValue == 2) { //if user chose option 2
 		std::cout << "Terminating program." << std::endl;
 		exit(0); // terminate program with exit code 0. 0 means that the programs is terminating successfully
 	}
