@@ -42,6 +42,7 @@ void menu::startMenu()
 		mazeDisplayer displayer(mazeVec); //pass the mazeVector into the class mazeDisplayer to print the maze
 	}
 	else if (inputValue == 1) { //if user chose option 1
+		std::cout << "\033[2J\033[1;1H"; //clears screen
 		int dimension = DimMenu(); //returns integer that tells which dimension that is to be used for the maze
 	}
 	else if (inputValue == 2) { //if user chose option 2
