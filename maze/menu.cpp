@@ -9,8 +9,19 @@ menu::menu()
 }
 
 //menu for letting the user to generate a maze of a different dimension,
-int menu::DimMenu()
+void menu::MazeMenu()
 {
+	std::cout << "Mazegenerator Menu" << '\n' << '\n'; //i want to keep this all the time while at the page
+
+
+	this->mazeWidth = InputMazeDim("Choose desired maze width: ");
+	this->mazeHeight = InputMazeDim("Choose desired maze height: ");
+}
+
+
+int menu::InputMazeDim(std::string dimension)
+{
+	std::cout << dimension << std::endl;
 	return 0;
 }
 
