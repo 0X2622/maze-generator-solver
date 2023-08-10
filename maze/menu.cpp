@@ -22,7 +22,13 @@ void menu::MazeMenu()
 int menu::InputMazeDim(std::string dimension)
 {
 	std::cout << dimension << std::endl;
-	return 0;
+	std::cout << "\033[s";	// Save current cursor position
+	int upperBound = 50;
+	int lowerBound = 4;
+	this->errorMsg_RANGE = " 4 and 50";
+	input();
+
+	return this->inputOption; //returns the input data to the dimension
 }
 
 void menu::startMenu()

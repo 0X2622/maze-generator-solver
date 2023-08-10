@@ -28,6 +28,7 @@ private:
 	//errorMessages used for wrong input value & type
 	std::string errorMsg_Value; //om jag inte använder denna kan ja ta bort den. Kolla om denna verkligen behövs.
 	std::string errorMsg_TYPE = "Error: Invalid input type. Make sure to input a value of type integer."; 
+	std::string errorMsg_RANGE;
 
 public:
 	menu(); //default constructor 
