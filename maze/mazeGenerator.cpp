@@ -4,11 +4,16 @@
 
 //default ctr that sets the matrix dimensions, call the node generator with the given dimensions, sets the maze start
 // and maze end positions and lastly creates a DFS maze path based on these previous generated data structures.
-mazeGenerator::mazeGenerator()
+mazeGenerator::mazeGenerator() : mazeWidth(6), mazeHeigth(6)
 {
-	this->mazeWidth = 6;
-	this->mazeHeigth = 6; 
 	this->NodesGenerator(mazeWidth, mazeHeigth); 
+	this->maze_StartEndPOS();
+	this->DFS_Generator();
+}
+
+mazeGenerator::mazeGenerator(int MazeWidth, int MazeHeight) : mazeWidth(MazeWidth), mazeHeigth(MazeHeight)
+{
+	this->NodesGenerator(mazeWidth, mazeHeigth);
 	this->maze_StartEndPOS();
 	this->DFS_Generator();
 }

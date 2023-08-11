@@ -19,6 +19,11 @@ void menu::MazeMenu()
 	this->MenuChoice = "Dimension";
 	this->mazeWidth = InputMazeDim("Choose desired maze width: ");
 	this->mazeHeight = InputMazeDim("Choose desired maze height: ");
+
+	//initiate 2 parameter constructor with the specified user mazewidth and height and create a reference to that object
+	const mazeGenerator& mazeObj = mazeGenerator(mazeWidth, mazeHeight); 
+	const std::vector<std::vector<MazeNode*>>& mazeVec = mazeObj.getMazeVector(); //create a reference to the mazeVector
+	mazeDisplayer displayer(mazeVec); //pass the mazeVector into the class mazeDisplayer to print the maze
 }
 
 

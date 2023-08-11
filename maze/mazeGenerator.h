@@ -32,6 +32,7 @@ class mazeGenerator {
 public:
 
 	mazeGenerator(); //default constructor -> generates a maze by default size 6x6 dim.
+	mazeGenerator(int MazeWidth, int MazeHeight);
 
 	/*
 	mazeGenerator(const mazeGenerator& rhs); //copy construct. take a referense of the rhs and copies the data
