@@ -268,7 +268,7 @@ void mazeDisplayer::AdjustVisited()
 void mazeDisplayer::AdjustStartPos()
 {
     std::cout << "\033[D" << "\033[D" << "\033[D";
-    if (mazeVec.size() >= 23 && mazeVec[0].size() >= 23) {
+    if (mazeVec.size() >= 23 && mazeVec[0].size() >= 23) { //only if maze is allowed to be over size 23
         std::cout << "\033[B" << "\033[B";
     }
     else if (mazeVec.size() >= 24 && mazeVec[0].size() >= 24) {
