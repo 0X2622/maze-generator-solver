@@ -110,8 +110,10 @@ private:
 	MazeNode* StartNode = nullptr;
 	MazeNode* EndNode = nullptr;
 
+	//kolla om dessa används
 	bool startBool = false;
 	bool endBool = false;
+
 	std::string StepDirection;
 	std::string BackTrackDirection;
 
