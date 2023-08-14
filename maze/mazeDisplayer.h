@@ -26,6 +26,7 @@ class mazeDisplayer {
 
 private:
 
+	/*
 	struct VisualNode {
 	private:
 		bool visited = false; //always set as false by default
@@ -71,7 +72,7 @@ private:
 		void setNodeType(std::string type) { this->NodeType = type; };
 		std::string getNodeType() const { return this->NodeType; }; //getter for node type - used for mazeDisplay print function
 
-	};
+	};*/
 
 	int mazeWidth;
 	int mazeHeight;
@@ -81,9 +82,9 @@ private:
 	// the purpose of the extended gaps is to make the maze a little bigger and more readable.
 	const std::string Vert_wall = " | ";
 	const std::string Hori_wall = "------"; 
-	//const std::string start = " S ";
-	//const std::string end = " E ";
-	//const std::string RegNode = " * ";
+	const std::string start = " S ";
+	const std::string end = " E ";
+	const std::string RegNode = " * ";
 	const std::string H_path = "     "; 
 	const std::string V_path = "   ";
 
@@ -94,21 +95,25 @@ private:
 	const std::string MazePathDown = " v ";
 
 	std::string context; //will be used in printNodeRow to determine it's behaivour
+	
 	const std::vector<std::vector<MazeNode*>>& mazeVec; //represents the passed in 2Dvector that holds the maze datastructure
-	std::vector<std::vector<VisualNode*>> VisualMazeVec;
+	//std::vector<std::vector<VisualNode*>> VisualMazeVec;
 
 	//data used for mazesolver
 	int GenerateFlag = 0;
-	std::stack<VisualNode*> NodeStack;
-	VisualNode* Tracker;
+	std::stack<MazeNode*> NodeStack;
+	MazeNode* Tracker;
+
 	//MazeNode* StartNode = nullptr; //this node will be set as the start node to solve the maze path
 	//MazeNode* EndNode = nullptr; //end node that will be set as the goal for solving the maze
 
-	VisualNode* StartNode = nullptr;
-	VisualNode* EndNode = nullptr;
+	MazeNode* StartNode = nullptr;
+	MazeNode* EndNode = nullptr;
+
 	bool startBool = false;
 	bool endBool = false;
-	std::string LastDirection;
+	std::string StepDirection;
+	std::string BackTrackDirection;
 
 
 	//maybe i need to create a struct here that represents the characteristics of a visual string node
@@ -133,15 +138,19 @@ public:
 	void analyzeRightPtr(MazeNode* MazeNode); //analyzes the right ptr of a node to determine if a wall/path should be there
 	void analyzeDownPtr(const std::vector<MazeNode*> mazeRow);//analyzes the down ptr of nodes to generate wall/or path. 
 	//void findStartNode(); not needed anymore
-	void NodesLinker();
+	//void NodesLinker();
 	void FindNodeType();
+	void AdjustVisited();
+	void AdjustStartPos();
 	void DFS_MazeSolver();
-	void setDimensions();
+	//void setDimensions();
+	
 	void StepUp();
 	void StepDown();
 	void StepLeft();
 	void StepRight();
 	void BackTrack();
+	
 	~mazeDisplayer();
 };
 
