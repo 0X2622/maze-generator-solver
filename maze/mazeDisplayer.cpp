@@ -8,6 +8,10 @@ mazeDisplayer::mazeDisplayer(const std::vector<std::vector<MazeNode*>>& mazeVec)
 {
     printMatrix(); //only prints the 2D matrix datastructure
     printMaze(); //prints the generatez maze with it's path
+    setDimensions();
+    NodesLinker();
+    FindNodeType();
+    DFS_MazeSolver();
 }
 
 
@@ -15,15 +19,19 @@ mazeDisplayer::mazeDisplayer(const std::vector<std::vector<MazeNode*>>& mazeVec)
 // of the complete 2D matrix with start and end points.
 void mazeDisplayer::printMatrix()
 {
-    this->funType = "printMatrix"; //value to determine behaviour of "printRowNode"
+    this->context = "printMatrix"; //value to determine behaviour of "printRowNode"
     this->printHorisontalWall(); //print a long horrizontal wall along the top of the matrix to create a "roof"
 
     //for each element in mazeVec, where each element = a complete row, 6 in total. 
     //For all individual rows, print their respective nodes and walls
     for (const auto& mazeRow : mazeVec) {
         printNodeRow(mazeRow); //each iteration is equal to one complete row of printed nodes
-        printHorisontalWall(); //after each row of printed nodes a horrizontal wall is placed beneath the row for sepparation.
+        printHorisontalWall(); //after each row of printed nodes a horrizontal wall is placed beneath the row sfor sepparation.
     }
+
+    //indicates that the visual datastrucuture has been made so that the method "printnodesrow" won't 
+    // push back new rows next time it's called
+    matrixGenerated_FLAG = 1; 
 
     std::cout << "Press any key to continue with the maze Generation.";
     //ignores all characters in the input buffer until new line. preventing it from being consumed by cin.get()
@@ -41,7 +49,7 @@ void mazeDisplayer::printMatrix()
 // end node "E"
 void mazeDisplayer::printMaze()
 {
-    this->funType = "printMaze"; //sets the context/state of the program.
+    this->context = "printMaze"; //sets the context/state of the program.
     this->printHorisontalWall(); //print a long horrizontal wall at the top of the matrix to create a "roof"
 
     // For each maze row, print the respective nodes, analyze their pointers and print wall/or path, do it for all rows.
@@ -51,10 +59,10 @@ void mazeDisplayer::printMaze()
         std::cout << "\n"; // Move output cursor down to next line for processing the next row.
     }
 
-    std::cout << "Press any key + enter to return to the main menu";
+    std::cout << "Press any key + enter to solve the generated maze";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cin.get();
-    std::cout << "\033[2J\033[1;1H";
+    //std::cout << "\033[2J\033[1;1H";
 }
 
 //purpose of function is to print a horrizontal wall over a complete matrix row to create sepparation between rows
@@ -76,31 +84,75 @@ void mazeDisplayer::printHorisontalWall()
 // or it will examine the right node pinters to generate the maze and create walls/paths.
 // The argument is a complete row, and a string that tells the state/context.
 void mazeDisplayer::printNodeRow(const std::vector<MazeNode*>& mazeRow){
+
+    // Creates a temporary row vector that will store the visual representation of nodes for a complete row
+    // which then will be pushed back into visual mazeVec - which will be used to 
+    // solve and print the visual maze
+    std::vector<VisualNode*> row; 
+    std::pair<int, int>Coordinates; //temporary variable "coordinates" that will hold coordinates to a node
+
     std::cout << Vert_wall; //Creates a vertcal wall at the left most column before each iteration
     
     //analyze nodeType for a complete row
     for (const auto& mazeNode : mazeRow) { //for each element in a mazeRow = a single mazeNode.
         switch (mazeNode->getNodeType()) {
-        case NodeType::START:
-            std::cout << start;
-            break;
-        case NodeType::END:
-            std::cout << end;
-            break;
-        case NodeType::REGULAR:
-            std::cout << RegNode;
-            break;
+        case NodeType::START: {
+            //std::cout << start;
+            std::cout << "\033[s"; //saves the cursor position for maze path solving from the start point.
+            Coordinates = std::make_pair(mazeNode->getCoordinatesFirst(), mazeNode->getCoordinatesSecond());
+            
+            //instansiataing a new object "VisualNode", that will hold the same characteristics as the node
+            // from the mazeVector, the purpose is so that this visual node will have the same coordinates
+            // in the visual matrix as the MazeNodes coordinates in the mazeVec, and thus they are perfectly
+            // syncronized in terms of the structure. The node also gets marked as "S" which indicates that
+            // its a start node, and then we create a pointer sNode (start node) that points towards the 
+            // address of the new visual node, and this node then gets pushed back into "visualMazeVec"
+            VisualNode* sNode = new VisualNode(Coordinates, " S "); //sNode stands for start Node
+            //sNode->SetNodeType("start"); //sets the visual representation of the node in the matrix
+            std::cout << sNode->GetNodeType(); //prints out the node
+            row.push_back(sNode); //pushes the start node into the nodesvector
+            //row.push_back(start);
+            break; }
+        case NodeType::END: {
+            //std::cout << end;
+            Coordinates = std::make_pair(mazeNode->getCoordinatesFirst(), mazeNode->getCoordinatesSecond());
+            VisualNode* eNode = new VisualNode(Coordinates, " E "); //sNode stands for start Node
+            //eNode->SetNodeType("end");
+            std::cout << eNode->GetNodeType();
+            row.push_back(eNode);
+            break; }
+        case NodeType::REGULAR: {
+            //std::cout << RegNode;
+            Coordinates = std::make_pair(mazeNode->getCoordinatesFirst(), mazeNode->getCoordinatesSecond());
+            VisualNode* rNode = new VisualNode(Coordinates, " * "); //sNode stands for start Node
+            //rNode->SetNodeType("reg");
+            if (context == "printMatrix") {
+                std::cout << rNode->GetNodeType();
+            }
+            else if (context == "printMaze") {
+                std::cout << "   ";
+            }
+            row.push_back(rNode);
+            break; }
         default:
             break;
         }
         
         //checks the context of the program and determine the behaivour of the function.
-        if (this->funType == "printMatrix") {
+        if (this->context == "printMatrix") {
             std::cout << Vert_wall; // print vertical wall after each node insert to surround nodes with vertical walls
         }
-        else if (this->funType == "printMaze") {
+        else if (this->context == "printMaze") {
             analyzeRightPtr(mazeNode); //if the context is to print the maze -> analyze the right pointers for links
         }
+    }
+
+
+    //what im doing to to create a vector that will hold pointers to the visual node objects.
+    // by having a container of the visual datastructure of the nodes, we can access it for solving the
+    // maze by checking which visual nodes that have a path between or not.
+    if (matrixGenerated_FLAG == 0) {
+        VisualMazeVec.push_back(row); //pushes back the entire row (vector) of visual nodes into the vector
     }
     std::cout << "\n"; // End of the node row. This causes output to go to the beginning of next line.
 }
@@ -134,7 +186,221 @@ void mazeDisplayer::analyzeDownPtr(const std::vector<MazeNode*> mazeRow)
     }
 }
 
+//iterates through all nodes in the mazeVec, and check their linkings, and at the same time iterates
+//through the nodes in the VisualNodesVec, and make sure to mirror the linking in mazeVec, to make sure
+//that these two datastructures have the same mirrored linkings and mazepath.
+void mazeDisplayer::NodesLinker()
+{
+
+    for (auto& MazeRow : mazeVec) {
+        for (auto& mazeNode : MazeRow) {
+
+            //makes sure that the coordinates of the visual node corresponds to the nodes of the mazeNode
+            int i = mazeNode->getCoordinatesFirst(); 
+            int j = mazeNode->getCoordinatesSecond();
+            //VisualNode* visualNode = VisualMazeVec[i][j];
+
+            //maybe add potential check to check boundaries to make an extra safe filter.
+            if (j > 0) {
+                if (mazeNode->getLeftPtr() != nullptr) { // != nullptr means that the pointer is linked to a node
+                    //visualNode->setLeftPtr(VisualMazeVec[i][j - 1]); //links left node to the right
+                    VisualMazeVec[i][j]->setLeftPtr(VisualMazeVec[i][j - 1]);
+                    VisualMazeVec[i][j - 1]->setRightPtr(VisualMazeVec[i][j]);
+                }
+            }
+            if (i > 0) {
+                if (mazeNode->getUpPtr() != nullptr) {
+                    VisualMazeVec[i][j]->setUpPtr(VisualMazeVec[i - 1][j]);
+                    VisualMazeVec[i - 1][j]->setDownPtr(VisualMazeVec[i][j]);
+                }
+            }
+            if (j+1 <= mazeWidth - 1 ) {
+                if (mazeNode->getRightPtr() != nullptr) {
+                    VisualMazeVec[i][j]->setRightPtr(VisualMazeVec[i][j + 1]);
+                    VisualMazeVec[i][j + 1]->setLeftPtr(VisualMazeVec[i][j]);
+                }
+            }
+            if (i+1 < mazeHeight-1) {
+                if (mazeNode->getDownPtr() != nullptr) {
+                    VisualMazeVec[i][j]->setDownPtr(VisualMazeVec[i + 1][j]);
+                    VisualMazeVec[i + 1][j]->setUpPtr(VisualMazeVec[i][j]);
+                }
+            }
+        }
+    }
+}
+
+void mazeDisplayer::FindNodeType()
+{
+    for (auto& mazeRow : VisualMazeVec) {
+        for (auto& mazeNode : mazeRow) {
+            if (mazeNode->GetNodeType() == " S ") {
+                this->StartNode = mazeNode;
+            }
+            else if (mazeNode->GetNodeType() == " E ") {
+                this->EndNode = mazeNode;
+            }
+        }
+        if (StartNode != nullptr && EndNode != nullptr) { //if both nodes are found breaks out of outer loop
+            break;
+        }
+    }
+}
+
+//recursive DFS function that solves the maze and creates a visual path while solving it
+void mazeDisplayer::DFS_MazeSolver()
+{
+
+   
+    //makes sure that the StartNode is only pushed once into the nodestack
+    if (this->GenerateFlag == 0) {
+        std::cout << "\033[u"; // Restore cursor position to the marked startnode
+        this->Tracker = StartNode; //startnode will at this point point towards the start of the path
+        this->NodeStack.push(StartNode);
+        this->GenerateFlag = 1;
+    }
+
+    if (Tracker == EndNode) { //can också be if(NodeStack.empty())
+        std::cout << "Maze solving is complete!" << std::endl;
+        std::cout << "Press any key + enter to return to the main menu";
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cin.get();
+        std::cout << "\033[2J\033[1;1H"; // Clear screen
+        return; // Exit the function -> needed ? 
+    }
+    else if (!NodeStack.empty()) {
+        this->Tracker = NodeStack.top();
+
+        //important to also check if visited == false, so that the algorithm won't visit an already visited
+        //node that has links again.
+        if (Tracker->getLeftPtr() != nullptr && Tracker->getLeftPtr()->getVisited() == false) {
+            Tracker->SetNodeType(MazePathLeft); //visual step-path now points in a left direction
+            std::cout << Tracker->getNodeType();
+            Tracker->setVisited(true); //sets the currently pointed node as visited
+            StepLeft(); //moves the cursor towards the step direction.
+            NodeStack.push(Tracker->getLeftPtr()); //pushes the node left of the tracker to the stack
+            // Sleep for a short duration to see the real-time effect (optional)
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+        else if (Tracker->getUpPtr() != nullptr && Tracker->getUpPtr()->getVisited() == false) {
+            Tracker->SetNodeType(MazePathUp);
+            std::cout << Tracker->getNodeType();
+            Tracker->setVisited(true);
+            StepUp();
+            NodeStack.push(Tracker->getUpPtr());
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+        else if (Tracker->getRightPtr() != nullptr && Tracker->getRightPtr()->getVisited() == false) {
+            Tracker->SetNodeType(MazePathRight);
+            std::cout << Tracker->getNodeType();
+            Tracker->setVisited(true);
+            StepRight();
+            NodeStack.push(Tracker->getRightPtr());
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+        else if (Tracker->getDownPtr() != nullptr && Tracker->getDownPtr()->getVisited() == false) {
+            Tracker->SetNodeType(MazePathDown);
+            std::cout << Tracker->getNodeType();
+            Tracker->setVisited(true);
+            StepDown();
+            NodeStack.push(Tracker->getDownPtr());
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+        else {
+            //backtrack cursor function here in the case of no linked nodes
+            //change direction of stepping path
+            BackTrack();
+            NodeStack.top()->setVisited(false); // Set visited status to false for the node being popped
+            NodeStack.pop();
+        } 
+    }
+    //if no linked nodes found -> Backtrack and pop
+    DFS_MazeSolver(); //recursively calls itself
+}
+
+//1: Se ti
+
+//calculates the visual maze width and maze height.
+void mazeDisplayer::setDimensions()
+{
+    /*
+    int width = 0;
+    int height = 0;
+    for (auto& row : mazeVec) {
+        for (auto& node : row) {
+            width++;
+        }
+        height++;
+    }
+    this->mazeWidth = width/height;
+    this->mazeHeight = height; */
+
+    
+    int width = VisualMazeVec[0].size(); // width = the size of an entire row 
+    int height = VisualMazeVec.size(); //height = the size of a column (outer vector)
+
+    this->mazeWidth = width;
+    this->mazeHeight = height; 
+}
+
+void mazeDisplayer::StepUp()
+{
+    std::cout << "\033[A" << "\033[A" << "\033[D" << "\033[D" << "\033[D"; //move cursor up one level
+    LastDirection = "UP"; //makes sure to mark every last movement that is made by the cursor
+}
+void mazeDisplayer::StepDown()
+{
+    std::cout << "\033[B" << "\033[B" << "\033[D" << "\033[D" << "\033[D";
+    LastDirection = "DOWN";
+}
+void mazeDisplayer::StepLeft()
+{
+    std::cout << "\033[D" << "\033[D" << "\033[D" << "\033[D" << "\033[D" 
+        << "\033[D" << "\033[D" << "\033[D" << "\033[D";
+    LastDirection = "LEFT";
+}
+void mazeDisplayer::StepRight()
+{
+    std::cout << "   ";
+    LastDirection = "RIGHT";
+}
+void mazeDisplayer::BackTrack()
+{
+    if (LastDirection == "UP") {
+        StepDown();
+        Tracker->SetNodeType(MazePathDown); //visual step-path now points in a left direction
+        std::cout << Tracker->getNodeType();
+        //StepDown();
+    }
+    else if (LastDirection == "DOWN") {
+        StepUp();
+        Tracker->SetNodeType(MazePathUp); //visual step-path now points in a left direction
+        std::cout << Tracker->getNodeType();
+        //StepUp();
+    }
+    else if (LastDirection == "LEFT") {
+        StepRight();
+        Tracker->SetNodeType(MazePathRight); //visual step-path now points in a left direction
+        std::cout << Tracker->getNodeType();
+        //StepRight();
+    }
+    else if (LastDirection == "RIGHT") {
+        StepLeft();
+        Tracker->SetNodeType(MazePathLeft); //visual step-path now points in a left direction
+        std::cout << Tracker->getNodeType();
+        //StepLeft();
+    }
+}
+
 //Destructor of the object
 mazeDisplayer::~mazeDisplayer()
 {
+    for (auto& mazeRow : this->VisualMazeVec) { //fetches vectors that hold entire mazeRows.
+        for (auto& node : mazeRow) { //iterates through all nodes in the entire fetched fector
+            delete node; // Deallocates the memory for the node
+        }
+        mazeRow.clear(); // Clear the vector for this row once all nodes are deleted (maybe i can delete this shit?)
+    }
+    this->VisualMazeVec.clear(); // Clear the outer vector
 }
+

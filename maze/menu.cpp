@@ -15,7 +15,7 @@ void menu::MazeMenu()
 	
 	//sets the lower and upper limit for maze dimensions.
 	this->option1 = 4;
-	this->option2 = 50;
+	this->option2 = 30;
 	this->MenuChoice = "Dimension";
 	this->mazeWidth = InputMazeDim("Choose desired maze width: ");
 	this->mazeHeight = InputMazeDim("Choose desired maze height: ");
@@ -141,7 +141,7 @@ bool menu::inputErrorCheck()
 	}
 	//if the cin buffer does not have a fail bit but the error flag is still == 0 means that the user made a wrong input value for the dimension menu
 	else if (this->int_errorFlagBit == 2){ //the user made an invalid input for the maze Dimensions.
-		std::cout << "Error: Invalid input. Make sure to insert dimensions between 4 and 50 " << std::endl;
+		std::cout << "Error: Invalid input. Make sure to insert dimensions between 4 and 30 " << std::endl;
 		flushBuffer(); //flushes the buffer from previous invalid input characters
 		std::cout << "\033[u"; // restore cursor position to the current line
 		std::cout << "\033[K"; // clear line from previous output
