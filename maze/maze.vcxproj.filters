@@ -18,27 +18,21 @@
     <ClInclude Include="mazeGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mazeSolver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="mazeDisplayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="menu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mazeInterface.h">
+    <ClInclude Include="MazeNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MazeNode.h">
+    <ClInclude Include="Screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mazeGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="mazeSolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mazeDisplayer.cpp">

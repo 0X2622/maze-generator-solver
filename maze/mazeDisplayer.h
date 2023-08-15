@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include<stack>
-#include <thread> // for sleep
+#include <thread> // for sleep functionality during mazesolving
 
 
 //forward declaration/reference of the struct MazeNode, this allows us to declare MazeNode datatypes in the class

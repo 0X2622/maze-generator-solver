@@ -18,7 +18,8 @@ private:
 	double inputValue; //will be used for all inputs for the different menus.
 	double option1; //control value for the first menu option
 	double option2; //control value for the second menu option.
-	std::string MenuChoice;
+	int option3 = 2; //option for terminating the program
+	std::string Context;
 
 	//boolean used for errorcheck validation.
 	//sets inital condition to false so that it can be set to true * only* if the input is of a correct type/or value
@@ -28,7 +29,7 @@ private:
 	
 	//errorMessages used for wrong input value & type
 	std::string errorMsg_Value; //om jag inte använder denna kan ja ta bort den. Kolla om denna verkligen behövs.
-	std::string errorMsg_TYPE = "Error: Invalid input type. Make sure to input a value of type integer."; 
+	std::string errorMsg_TYPE = "Error: Invalid input type. Make sure to input an integer type."; 
 	std::string errorMsg_RANGE = "4 and 30";
 
 public:
@@ -41,8 +42,6 @@ public:
 	void flushBuffer(); //flushes the cin buffer
 	double getInputVal();
 	~menu(); //destructor (kolla om jag verkligen ska lämna detta default eller inte)
-	//~menu() = default;
-
 };
 #endif // !MENU_H
 

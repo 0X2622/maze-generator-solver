@@ -131,6 +131,7 @@
     <ClInclude Include="mazeGenerator.h" />
     <ClInclude Include="MazeNode.h" />
     <ClInclude Include="menu.h" />
+    <ClInclude Include="Screen.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

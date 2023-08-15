@@ -55,7 +55,7 @@ void mazeDisplayer::printMaze()
     std::cout << "Press any key + enter to solve the generated maze";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cin.get();
-    //std::cout << "\033[2J\033[1;1H";
+    std::cout << "\033[K"; // clear line from previous output
 }
 
 //purpose of function is to print a horrizontal wall over a complete matrix row to create sepparation between rows
@@ -204,15 +204,15 @@ void mazeDisplayer::DFS_MazeSolver()
     }
 
     if (Tracker == EndNode) { //can också be if(NodeStack.empty())
-        std::cout << "Maze solving is complete!" << std::endl;
-        std::cout << "Press any key + enter to return to the main menu";
-        
+
+        //std::cout << "Maze solved - press any key to continue";
+
         //these 3 following lines i can make a function of
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cin.get();
         std::cout << "\033[2J\033[1;1H"; // Clear screen
         
-        return; // Exit the function -> needed ? 
+        return; // Exit the function
     }
     else if (!NodeStack.empty()) {
 
