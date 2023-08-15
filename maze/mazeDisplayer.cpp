@@ -354,39 +354,44 @@ void mazeDisplayer::DFS_MazeSolver()
 void mazeDisplayer::StepUp()
 {
     std::cout << "\033[A" << "\033[A" << "\033[D" << "\033[D" << "\033[D"; //move cursor up one level
-    StepDirection = "UP";
+    
+    /*StepDirection = "UP";
     if (context == "BackTracking"){ //if called from the backtracker then it should be going the same way as the function
         BackTrackDirection = "UP";
     }
-    else { BackTrackDirection = "DOWN"; }
+    else { BackTrackDirection = "DOWN"; } */
 }
 void mazeDisplayer::StepDown()
 {
     std::cout << "\033[B" << "\033[B" << "\033[D" << "\033[D" << "\033[D";
-    StepDirection = "DOWN";
+    
+    
+    /*StepDirection = "DOWN";
     if (context == "BackTracking") {
         BackTrackDirection = "DOWN";
     }
-    else { BackTrackDirection = "UP"; }
+    else { BackTrackDirection = "UP"; }*/
 }
 void mazeDisplayer::StepLeft()
 {
     std::cout << "\033[D" << "\033[D" << "\033[D" << "\033[D" << "\033[D" 
         << "\033[D" << "\033[D" << "\033[D" << "\033[D";
-    StepDirection = "LEFT";
+    
+    /*StepDirection = "LEFT";
     if (context == "BackTracking") {
         BackTrackDirection = "LEFT";
     }
-    else { BackTrackDirection = "RIGHT"; }
+    else { BackTrackDirection = "RIGHT"; }*/
 }
 void mazeDisplayer::StepRight()
 {
     std::cout << "   ";
-    StepDirection = "RIGHT";
+    
+    /*StepDirection = "RIGHT";
     if (context == "BackTracking") {
         BackTrackDirection = "RIGHT";
     }
-    else { BackTrackDirection = "LEFT"; }
+    else { BackTrackDirection = "LEFT"; }*/
 }
 void mazeDisplayer::BackTrack()
 {
