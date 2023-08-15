@@ -18,6 +18,7 @@ struct MazeNode {
 private:
 	NodeType nodeType; //will be used to give each one it's own ENUM type
 	bool visited = false; // sets false as default since all nodes are not visited initially.
+	bool BackTracked = false;//a bool that tells if a node has been backtracked used in mazesolving
 
 	//nodepointers that is used to link nodes to create a maze path. pointers that are not linked to a node, will indicate
 	//that a maze wall needs to be generated instead of a maze path.
@@ -50,6 +51,11 @@ public:
 	MazeNode* getDownPtr() { return this->down; };
 	MazeNode* getLeftPtr() {return this->left; };
 	MazeNode* getRightPtr() { return this->right; };
+
+	//used for setting information if a node has been backtracked to aid the cursor during the mazesolving
+	//backtracking process -> it needs to know how to behave when paths has been backtracked already
+	void SetBackTracked(bool tracked) { this->BackTracked = tracked; } 
+	bool GetBackTracked() { return this->BackTracked; }
 
 	const bool getVisited() const { return this->visited; } //gets the visited status of a node, used by FindNeighboors
 	void setVisited(bool marked) { this->visited = marked; }; //setter for the mazenode visited status. Used by DFS
