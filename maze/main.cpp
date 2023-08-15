@@ -6,17 +6,6 @@
 // The object 'menu' is what will navigate the entire flow of the program, by providing a an initial visual interface,
 // and communication with other classes that lets the user to use the program effectively.
 
-
-
-
-//TODO kvar att fixa::
-//  1: Kolla om copy ctr + copy assign + move ctr + move assign måste tilläggas i mazeGenerator.h och såfall om jag annars
-// måste åtminstone sätta att dessa konstrutorer är = "delete" Men då jag endast använder en default ctr för detta program,
-// så kanske det inte behövs ? 
-
-//2: kolla att ja inkluderar biblioteken rimligt utan dubleringar. Dessa två punkter kan fixas på 30 min.
-
-
 int main() {
 	
 	bool running = true; //boolean value that indicates that the program is running
