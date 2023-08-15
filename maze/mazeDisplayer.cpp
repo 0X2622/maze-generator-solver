@@ -316,28 +316,28 @@ void mazeDisplayer::DFS_MazeSolver()
             StepLeft(); //moves the cursor towards the step direction.
             NodeStack.push(Tracker->getLeftPtr()); //pushes the node left of the tracker to the stack
             // Sleep for a short duration to see the real-time effect (optional)
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
         else if (Tracker->getUpPtr() != nullptr && Tracker->getUpPtr()->getVisited() == false) {
             std::cout << MazePathUp;
             //Tracker->setVisited(true);
             StepUp();
             NodeStack.push(Tracker->getUpPtr());
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
         else if (Tracker->getRightPtr() != nullptr && Tracker->getRightPtr()->getVisited() == false) {
             std::cout << MazePathRight;
             //Tracker->setVisited(true);
             StepRight();
             NodeStack.push(Tracker->getRightPtr());
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
         else if (Tracker->getDownPtr() != nullptr && Tracker->getDownPtr()->getVisited() == false) {
             std::cout << MazePathDown;
             //Tracker->setVisited(true);
             StepDown();
             NodeStack.push(Tracker->getDownPtr());
-            std::this_thread::sleep_for(std::chrono::milliseconds(250));
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
         else {
             //backtrack cursor function here in the case of no linked nodes
@@ -398,71 +398,34 @@ void mazeDisplayer::BackTrack()
     if (Tracker->getUpPtr() != nullptr && !Tracker->getUpPtr()->GetBackTracked()) {
         // Move cursor up
         std::cout << MazePathUp;
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
         Tracker->SetBackTracked(true);
         StepUp();
     }
     else if (Tracker->getDownPtr() != nullptr && !Tracker->getDownPtr()->GetBackTracked()) {
         // Move cursor down
         std::cout << MazePathDown;
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
         Tracker->SetBackTracked(true);
         StepDown();
     }
     else if (Tracker->getLeftPtr() != nullptr && !Tracker->getLeftPtr()->GetBackTracked()) {
         // Move cursor left
         std::cout << MazePathLeft;
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
         Tracker->SetBackTracked(true);
         StepLeft();
     }
     else if (Tracker->getRightPtr() != nullptr && !Tracker->getRightPtr()->GetBackTracked()) {
         // Move cursor right
         std::cout << MazePathRight;
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
         Tracker->SetBackTracked(true);
         StepRight();
     }
-
-
-
-    /*
-    if (BackTrackDirection == "UP") {
-        std::cout << MazePathUp;
-        std::this_thread::sleep_for(std::chrono::milliseconds(400));
-        Tracker->SetBackTracked(true);
-        StepUp();
-    }
-    else if (BackTrackDirection == "DOWN") {
-        std::cout << MazePathDown;
-        std::this_thread::sleep_for(std::chrono::milliseconds(400));
-        Tracker->SetBackTracked(true);
-        StepDown();
-    }
-    else if (BackTrackDirection == "LEFT") {
-        std::cout << MazePathLeft;
-        std::this_thread::sleep_for(std::chrono::milliseconds(400));
-        Tracker->SetBackTracked(true);
-        StepLeft();
-    }
-    else if (BackTrackDirection == "RIGHT") {
-        std::cout << MazePathRight;
-        std::this_thread::sleep_for(std::chrono::milliseconds(400));
-        Tracker->SetBackTracked(true);
-        StepRight();
-    }*/
 }
 
 //Destructor of the object
-mazeDisplayer::~mazeDisplayer()
-{
-    /*
-    for (auto& mazeRow : this->VisualMazeVec) { //fetches vectors that hold entire mazeRows.
-        for (auto& node : mazeRow) { //iterates through all nodes in the entire fetched fector
-            delete node; // Deallocates the memory for the node
-        }
-        mazeRow.clear(); // Clear the vector for this row once all nodes are deleted (maybe i can delete this shit?)
-    }
-    this->VisualMazeVec.clear(); // Clear the outer vector*/
-}
+mazeDisplayer::~mazeDisplayer() {
 
+}
