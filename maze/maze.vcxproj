@@ -131,13 +131,14 @@
     <ClInclude Include="mazeGenerator.h" />
     <ClInclude Include="MazeNode.h" />
     <ClInclude Include="menu.h" />
-    <ClInclude Include="Screen.h" />
+    <ClInclude Include="ScreenManipulation.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mazeGenerator.cpp" />
     <ClCompile Include="mazeDisplayer.cpp" />
     <ClCompile Include="menu.cpp" />
+    <ClCompile Include="ScreenManipulation.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

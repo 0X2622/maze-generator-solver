@@ -12,7 +12,8 @@
 // and assigning each individual node to one of these types, we can distinguish between the 
 // the starter node, end node and regular path nodes. By allowing these nodetypes mazeDisplayer can present each node
 // differently depending on its enum type.
-enum class NodeType { START, END, REGULAR}; 
+// Enum type provides readability and also the ability for using switch-cases
+enum NodeType { START, END, REGULAR}; 
 struct MazeNode {
 
 private:

@@ -1,14 +1,16 @@
 #include "mazeDisplayer.h"
 #include "mazeGenerator.h"
-#include <limits>
+#include "ScreenManipulation.h"
+#include <thread> //sleep functionality during mazesolving. Reference: https://en.cppreference.com/w/cpp/thread/sleep_for
 
 
 //ctr that initalizes the class members and also start the functions to generate the matrix and the maze
 mazeDisplayer::mazeDisplayer(const std::vector<std::vector<MazeNode*>>& mazeVec) : mazeVec(mazeVec)
 {
+    this->mazeHeight = mazeVec.size(); //sets mazeHeight to the amount of mazeRows
+    this->mazeWidth = mazeVec[0].size(); //sets the mazeWidth to the mount of columns for the first mazeRow
     printMatrix(); //only prints the 2D matrix datastructure
     printMaze(); //prints the generatez maze with it's path
-    FindNodeType();
     DFS_MazeSolver();
 }
 
@@ -22,20 +24,13 @@ void mazeDisplayer::printMatrix()
 
     //for each element in mazeVec, where each element = a complete row, 6 in total. 
     //For all individual rows, print their respective nodes and walls
-    for (const auto& mazeRow : mazeVec) {
-        printNodeRow(mazeRow); //each iteration is equal to one complete row of printed nodes
+    for (const std::vector<MazeNode*> &mazeRow : mazeVec) {
+        printMazeRow(mazeRow); //each iteration is equal to one complete row of printed nodes
         printHorisontalWall(); //after each row of printed nodes a horrizontal wall is placed beneath the row sfor sepparation.
     }
     std::cout << "Press any key to continue with the maze Generation.";
-    //ignores all characters in the input buffer until new line. preventing it from being consumed by cin.get()
-    //source "https://stackoverflow.com/questions/25020129/cin-ignorenumeric-limitsstreamsizemax-n" 
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cin.get();  //now cin.get() will pause the program and wait for the user to provide a new input
-    
-    // "\033[2J" clears the screen and "\033[1;1H" moves the cursor to the upper left corner of the screen.
-    // Which is needed for generating the actuall maze. 
-    //Src : " https://stackoverflow.com/questions/4062045/clearing-terminal-in-linux-with-c-code " 
-    std::cout << "\033[2J\033[1;1H"; 
+    ScreenManipulation::pressAnyKey(); //flushes the cin-buffer and then calls a cin.get() to wait for user input
+    ScreenManipulation::ClearScreen(); //after user has pressed any key then the screen will be cleared for mazeGeneration
 }
 
 //method for printing the actuall generated maze, that will contain the continous path from the start node "S" to the
@@ -46,51 +41,53 @@ void mazeDisplayer::printMaze()
     this->printHorisontalWall(); //print a long horrizontal wall at the top of the matrix to create a "roof"
 
     // For each maze row, print the respective nodes, analyze their pointers and print wall/or path, do it for all rows.
-    for (const auto& mazeRow : mazeVec) {
-        printNodeRow(mazeRow); //prints out nodes for a row and analyzes its right pointers
+    for (const std::vector<MazeNode*> &mazeRow : mazeVec) {
+        printMazeRow(mazeRow); //prints out nodes for a row and analyzes its right pointers
         analyzeDownPtr(mazeRow); //analyzes the whole same row again for its down pointers for horizontal walls/paths
         std::cout << "\n"; // Move output cursor down to next line for processing the next row.
     }
 
     std::cout << "Press any key + enter to solve the generated maze";
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cin.get();
-    std::cout << "\033[K"; // clear line from previous output
+    ScreenManipulation::pressAnyKey();
 }
 
-//purpose of function is to print a horrizontal wall over a complete matrix row to create sepparation between rows
+// This function prints one horizontal wall over an entire row
+// A wall is made of chunks of "------" that is placed next to each other to create the entire wall
 void mazeDisplayer::printHorisontalWall()
 {
-    // mazeVec[0] = first vector/row in the matrix, 
-    // mazeVec[0}.size = number of elements for the first row.
-    std::cout << " "; // Extra space at the start of the line to make the horrizontal wall in right position
-    for (int j = 0; j < mazeVec[0].size(); j++) { //print out a horrizontal wall until end of the row
-        std::cout << Hori_wall; // 1 horrizontal wall = the space of 1 node
+    // Each induvidual iteration equals to printing a chunk of the wall which has the width of a square in the matrix.
+    std::cout << " "; // Adds an extra space at the start of the line to nudge the horrizontal wall in right position
+    for (int j = 0; j < mazeWidth; j++) { //print out a horrizontal wall until end of the row
+        std::cout << Hori_wall; // 1 chunk of horrizontal wall = the same space of 1 cell
     }
-    std::cout << "-"; //adds one extra wall unit at the right to tighten the gap
+    std::cout << "-"; //adds one extra wall unit at the right to tighten a visible gap at the end of the row
     std::cout << "\n"; //moves the output cursor down to next line for next row output
 }
 
 
 //function that insert nodes for a complete row. It analyzes the nodeType and outputs it. 
 // Depending on the context/state this function will either just print walls after each node
-// or it will examine the right node pinters to generate the maze and create walls/paths.
-// The argument is a complete row, and a string that tells the state/context.
-void mazeDisplayer::printNodeRow(const std::vector<MazeNode*>& mazeRow){
+// or it will examine the right node pointers to generate the maze and create walls/paths.
+void mazeDisplayer::printMazeRow(const std::vector<MazeNode*>& mazeRow){
 
     std::vector<std::string> row;
     std::cout << Vert_wall; //Creates a vertcal wall at the left most column before each iteration
     
-    //analyze nodeType for a complete row
-    for (const auto& mazeNode : mazeRow) { //for each element in a mazeRow = a single mazeNode.
+    // mazeNode is a reference to a node pointer inside vector mazerow, by using a reference we avoid copying and overhead,
+    // this reference is const since these Node-pointers are not to be modified
+    //analyzes nodeTypes for a complete row in the maze
+    for (MazeNode* const &mazeNode : mazeRow) { //for each element in a mazeRow = a single mazeNode.
+        mazeNode->setVisited(false); //sets the visited flag of all nodes to false for the MazeSolver to work properly.
         switch (mazeNode->getNodeType()) {
         case NodeType::START: {
             std::cout << start;
-            std::cout << "\033[s"; //saves the cursor position for maze path solving from the start point.
+            this->StartNode = mazeNode; //sets pointer to the startNode to mark the position
+            ScreenManipulation::SaveCursorPos();
             row.push_back(start);
             break; }
         case NodeType::END: {
             std::cout << end;
+            this->EndNode = mazeNode; //sets pointer to the endNode to mark the position
             row.push_back(end);
             break; }
         case NodeType::REGULAR: {
@@ -130,13 +127,13 @@ void mazeDisplayer::analyzeRightPtr(MazeNode* mazeNode)
     }
 }
 
-//Takes in a matrix row as argument and analyzes the downlink/down pointers of every node for that row to determine
+//Takes a row as argument and analyzes the downlink/down pointers of every node of that row to determine
 //if there should be a path, or a wall at that place.
 void mazeDisplayer::analyzeDownPtr(const std::vector<MazeNode*> mazeRow)
 {
     std::cout << " "; // places the elements of every row one step extra to the right for symmetrical alignment 
     std::cout << "|"; //tightens the vertical gap at the leftest column 
-    for (const auto& mazeNode : mazeRow) { //for each node in this row: 
+    for (MazeNode* const& mazeNode : mazeRow) { //for each node in this row: 
         if (mazeNode->getDownPtr() != nullptr) { //if downPtr != NULL = print a path :
             std::cout << H_path << "|"; //print path & also add one extra "|" to fill the vertical gap that a horrizontal path creates
         }
@@ -146,165 +143,105 @@ void mazeDisplayer::analyzeDownPtr(const std::vector<MazeNode*> mazeRow)
     }
 }
 
-void mazeDisplayer::FindNodeType()
-{
-    for (auto& mazeRow : mazeVec) {
-        for (auto& mazeNode : mazeRow) {
-            switch (mazeNode->getNodeType()) {
-                case NodeType::START: {
-                    this->StartNode = mazeNode;
-                    break;
-                }
-                case NodeType::END: {
-                    this->EndNode = mazeNode;
-                    break;
-                }
-            }
-        }
-        if (StartNode != nullptr && EndNode != nullptr) { //if both nodes are found breaks out of outer loop
-            break;
-        }
-    }
-}
-
-//sets the visited flag of all nodes to false for the MazeSolver to work properly.
-void mazeDisplayer::AdjustVisited()
-{
-    for (auto& MazeRow : mazeVec) {
-        for (auto& MazeNode : MazeRow) {
-            MazeNode->setVisited(false);
-        }
-    }
-}
-
-void mazeDisplayer::AdjustStartPos()
-{
-    std::cout << "\033[D" << "\033[D" << "\033[D";
-    if (mazeVec.size() >= 23 && mazeVec[0].size() >= 23) { //only if maze is allowed to be over size 23
-        std::cout << "\033[B" << "\033[B";
-    }
-    else if (mazeVec.size() >= 24 && mazeVec[0].size() >= 24) {
-        //std::cout << "\033[A" << "\033[A" << "\033[A" << "\033[A" << "\033[A" << "\033[A" << "\033[A" << "\033[A";
-        StepUp();
-    }
-}
-
-//recursive DFS function that solves the maze and creates a visual path while solving it
+// finds a path from StartNode to EndNode by analyzing the pointers of a node to see if there is a link (path)
+// to an adjacent node. If there is a link that leads to an unvisited neighbor, then that neighbor will be set
+// to the top of the stack, the tracker will be updated to the new node, and then a new link will be explored
+// from the new node. The tracker will start by pointing towards the startNode, if tracker == EndNode 
+// means the maze has been solved. No link &&  Nounvisited path means backtracking and popping the top of stack.
+// a real time visual representation of how the tracker is analyzing and solving the maze is shown in the screen 
 void mazeDisplayer::DFS_MazeSolver()
 {
-    context = "Solving";
     //makes sure that the StartNode is only pushed once into the nodestack
-    if (this->GenerateFlag == 0) {
-        AdjustVisited(); //sets all nodes.visited = false, for the mazesolving algorithm.
-        std::cout << "\033[u"; // Restore cursor position to the marked startnode
-        AdjustStartPos();
-        this->Tracker = StartNode; //startnode will at this point point towards the start of the path
+    if (this->StartNode->getVisited() == false) {
         this->NodeStack.push(StartNode);
-        this->GenerateFlag = 1;
+        ScreenManipulation::restorePosition(); // Restore cursor position to the marked startnode
+        ScreenManipulation::smallStepLeft(); //necessary small adjustements to the left for the cursors start position
     }
 
-    if (Tracker == EndNode) { //can också be if(NodeStack.empty())
+    // updates the tracker to the top of stack and sets that node as visited before we analyze adjacent nodes,
+    // this way, we can check if the tracker has reached the EndNode before each recursion.
+    this->Tracker = NodeStack.top(); 
+    Tracker->setVisited(true); 
 
-        //std::cout << "Maze solved - press any key to continue";
+    // As long as Tracker != EndNode && there are nodes left to be analyzed 
+    if (Tracker != EndNode && !NodeStack.empty()) {
 
-        //these 3 following lines i can make a function of
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        std::cin.get();
-        std::cout << "\033[2J\033[1;1H"; // Clear screen
-        
-        return; // Exit the function
-    }
-    else if (!NodeStack.empty()) {
-
-        this->Tracker = NodeStack.top();
-        Tracker->setVisited(true); //sets the currently pointed node as visited
-
-        //important to also check if visited == false, so that the algorithm won't visit an already visited
-        //node that has links again.
+        // explanation here: 
+        // by checking if visited == false we prevent the mazesolver from visitng a linked node that is visited
         if (Tracker->getLeftPtr() != nullptr && Tracker->getLeftPtr()->getVisited() == false) {
             std::cout << MazePathLeft;
-            StepLeft(); //moves the cursor towards the step direction.
+            ScreenManipulation::StepLeft(); //moves the cursor towards the step direction.
             NodeStack.push(Tracker->getLeftPtr()); //pushes the node left of the tracker to the stack
             // Sleep for a short duration to see the real-time effect (optional)
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            std::this_thread::sleep_for(std::chrono::milliseconds(170));
         }
         else if (Tracker->getUpPtr() != nullptr && Tracker->getUpPtr()->getVisited() == false) {
             std::cout << MazePathUp;
-            StepUp();
+            ScreenManipulation::StepUp();
             NodeStack.push(Tracker->getUpPtr());
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            std::this_thread::sleep_for(std::chrono::milliseconds(170));
         }
         else if (Tracker->getRightPtr() != nullptr && Tracker->getRightPtr()->getVisited() == false) {
             std::cout << MazePathRight;
-            StepRight();
+            ScreenManipulation::StepRight();
             NodeStack.push(Tracker->getRightPtr());
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            std::this_thread::sleep_for(std::chrono::milliseconds(170));
         }
         else if (Tracker->getDownPtr() != nullptr && Tracker->getDownPtr()->getVisited() == false) {
             std::cout << MazePathDown;
-            StepDown();
+            ScreenManipulation::StepDown();
             NodeStack.push(Tracker->getDownPtr());
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            std::this_thread::sleep_for(std::chrono::milliseconds(170));
         }
         else {
-            //backtrack cursor function here in the case of no linked nodes
-            //change direction of stepping path
-           context = "BackTracking";
-            BackTrack();
-            NodeStack.pop();
+                // if no available paths found && tracker has not reached the EndNode -> Backtrack
+                BackTrack();
+                NodeStack.pop();
         } 
+        DFS_MazeSolver(); //recursively calls itself
     }
-    //if no linked nodes found -> Backtrack and pop
-    DFS_MazeSolver(); //recursively calls itself
+    else if (Tracker == EndNode) { returnToMenu(); }
 }
 
-void mazeDisplayer::StepUp()
-{
-    std::cout << "\033[A" << "\033[A" << "\033[D" << "\033[D" << "\033[D"; //move cursor up one level
-}
-void mazeDisplayer::StepDown()
-{
-    std::cout << "\033[B" << "\033[B" << "\033[D" << "\033[D" << "\033[D";
-}
-void mazeDisplayer::StepLeft()
-{
-    std::cout << "\033[D" << "\033[D" << "\033[D" << "\033[D" << "\033[D" 
-        << "\033[D" << "\033[D" << "\033[D" << "\033[D";
-}
-void mazeDisplayer::StepRight()
-{
-    std::cout << "   ";
-}
+// This function analyzes which paths that are possible to travel to in a backtracking scenario.
+// if there is a link/
 void mazeDisplayer::BackTrack()
 {
-    if (Tracker->getUpPtr() != nullptr && !Tracker->getUpPtr()->GetBackTracked()) {
+    if (Tracker->getUpPtr() != nullptr && Tracker->getUpPtr()->GetBackTracked() == false) {
         // Move cursor up
         std::cout << MazePathUp;
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        std::this_thread::sleep_for(std::chrono::milliseconds(170));
         Tracker->SetBackTracked(true);
-        StepUp();
+        ScreenManipulation::StepUp();
     }
-    else if (Tracker->getDownPtr() != nullptr && !Tracker->getDownPtr()->GetBackTracked()) {
+    else if (Tracker->getDownPtr() != nullptr && Tracker->getDownPtr()->GetBackTracked() == false) {
         // Move cursor down
         std::cout << MazePathDown;
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        std::this_thread::sleep_for(std::chrono::milliseconds(170));
         Tracker->SetBackTracked(true);
-        StepDown();
+        ScreenManipulation::StepDown();
     }
-    else if (Tracker->getLeftPtr() != nullptr && !Tracker->getLeftPtr()->GetBackTracked()) {
+    else if (Tracker->getLeftPtr() != nullptr && Tracker->getLeftPtr()->GetBackTracked() == false) {
         // Move cursor left
         std::cout << MazePathLeft;
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        std::this_thread::sleep_for(std::chrono::milliseconds(170));
         Tracker->SetBackTracked(true);
-        StepLeft();
+        ScreenManipulation::StepLeft();
     }
-    else if (Tracker->getRightPtr() != nullptr && !Tracker->getRightPtr()->GetBackTracked()) {
+    else if (Tracker->getRightPtr() != nullptr && Tracker->getRightPtr()->GetBackTracked() == false) {
         // Move cursor right
         std::cout << MazePathRight;
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        std::this_thread::sleep_for(std::chrono::milliseconds(170));
         Tracker->SetBackTracked(true);
-        StepRight();
+        ScreenManipulation::StepRight();
     }
+}
+
+void mazeDisplayer::returnToMenu()
+{
+    ScreenManipulation::pressAnyKey();
+    ScreenManipulation::ClearScreen();
+    return; // Exit the function
 }
 
 //Destructor of the object
