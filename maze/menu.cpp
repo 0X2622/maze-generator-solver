@@ -34,19 +34,20 @@ void menu::startMenu()
 		const mazeGenerator& mazeObj = mazeGenerator(); //create referene to a default sized mazeObject
 		const std::vector<std::vector<MazeNode*>>& mazeVec = mazeObj.getMazeVector(); //create a reference to the mazeVector
 		mazeDisplayer displayer(mazeVec); //pass the mazeVector into the class mazeDisplayer to print the maze
+		//inputValue = 0;
 	}
 	else if (inputValue == 1) {
 		ScreenManipulation::ClearScreen();
 		MazeMenu(); //starts the menu which lets the user to determine maze dimensions and create the maze
-		
+		inputValue = 0; // reseting the input value to prevent termination of the program.
 		//initiate 2 parameter constructor with the specified user mazewidth and height and create a reference to that object
 		const mazeGenerator& mazeObj = mazeGenerator(mazeWidth, mazeHeight);
 		const std::vector<std::vector<MazeNode*>>& mazeVec = mazeObj.getMazeVector(); //create a reference to the mazeVector
 		mazeDisplayer displayer(mazeVec); //pass the mazeVector into the class mazeDisplayer to print the maze
+		//inputValue = 0;
 	}
-	else if (inputValue == 2) {
+	else if (inputValue == 2) { //inputValue == 2 will terminate the program.
 		std::cout << "Terminating program." << std::endl;
-		//exit(0); // terminate program with exit code 0 - which means that the programs is terminating successfully
 		return;
 	}
 }

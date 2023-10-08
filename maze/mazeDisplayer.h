@@ -4,14 +4,11 @@
 #include <iostream>
 #include<stack>
 
-
-
 //forward declaration of the struct MazeNode, this allows us to declare MazeNode datatypes in the class
 //without having to include the entire definition.
 struct MazeNode;
 
-//class used to display the generated datastructure from mazeGenerator which is the 2D matrix and the generated Maze
-// The display will be a visual representation of the generated datastructure
+// class that is used to create a visual represntation of the matrix, maze and the solved maze path
 class mazeDisplayer {
 
 private:
@@ -35,13 +32,9 @@ private:
 	const std::string MazePathDown = " v ";
 
 	std::string context; //will be used in printNodeRow to determine it's behaivour
-	const std::vector<std::vector<MazeNode*>>& mazeVec; //represents the passed in 2Dvector that holds the maze datastructure
-
-	//data used for mazesolver (kolla att all data här verkligen är relevant för denna klass).
+	const std::vector<std::vector<MazeNode*>>& mazeVec; //reference to vector that holds the maze datastructure
 	std::stack<MazeNode*> NodeStack;
 	MazeNode* Tracker;
-
-	//skall dessa två verkligen vara i displayerklassen? Jag har väl redan start och endNode i min vektor?
 	MazeNode* StartNode = nullptr;//this node will be set as the start node to solve the maze path
 	MazeNode* EndNode = nullptr;//end node that will be set as the goal for solving the maze
 
@@ -51,15 +44,15 @@ public:
 	//constructor that takes in the generated 2D mazeVector as input
 	mazeDisplayer(const std::vector<std::vector<MazeNode*>>& mazeVec);
 
-	void printMatrix(); //method that allows the user to see just the 2D matrix structure, with it's nodes and walls.
+	void printMatrix(); //creates just the 2D matrix structure with it's cells, nodes and walls.
 	void printMaze(); //method that is used to print the complete generated maze.
-	void printHorisontalWall(); //method for printing a line of horrisontal walls that is used for the matrix top roof.
-	void printMazeRow(const std::vector<MazeNode*>& mazeRow); //prints a row of mazeNodes + walls/paths 
-	void analyzeRightPtr(MazeNode* MazeNode); //analyzes the right ptr of a node to determine if a wall/path should be there
-	void analyzeDownPtr(const std::vector<MazeNode*> mazeRow);//analyzes the down ptr of nodes to generate wall/or path. 
-	void DFS_MazeSolver();
-	void BackTrack();
-	void returnToMenu();
+	void printHorisontalWall(); //prints a horrisontal wall over a complete mazeRow
+	void printMazeRow(const std::vector<MazeNode*>& mazeRow); //creates a complete maze/matrix row
+	void analyzeRightPtr(MazeNode* MazeNode); //analyzes the right ptr of a node 
+	void analyzeDownPtr(const std::vector<MazeNode*> mazeRow);//analyzes the down ptr of a node
+	void DFS_MazeSolver(); // solves the maze by analyzing the node pointers and its links
+	void BackTrack(); // function used to backtrack the visual mazesolver to a previous position/node
+	void returnToMenu(); // used to exit the maze solving process to return to the main menu
 	~mazeDisplayer();
 };
 

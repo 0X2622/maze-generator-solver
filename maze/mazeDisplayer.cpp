@@ -172,8 +172,7 @@ void mazeDisplayer::DFS_MazeSolver()
             std::cout << MazePathLeft;
             ScreenManipulation::StepLeft(); //moves the cursor towards the step direction.
             NodeStack.push(Tracker->getLeftPtr()); //pushes the node left of the tracker to the stack
-            // Sleep for a short duration to see the real-time effect (optional)
-            std::this_thread::sleep_for(std::chrono::milliseconds(170));
+            std::this_thread::sleep_for(std::chrono::milliseconds(170)); //sleep to se the solver in real-time
         }
         else if (Tracker->getUpPtr() != nullptr && Tracker->getUpPtr()->getVisited() == false) {
             std::cout << MazePathUp;
@@ -196,7 +195,7 @@ void mazeDisplayer::DFS_MazeSolver()
         else {
                 // if no available paths found && tracker has not reached the EndNode -> Backtrack
                 BackTrack();
-                NodeStack.pop();
+                NodeStack.pop(); // pops the stack top to analyze the previous node
         } 
         DFS_MazeSolver(); //recursively calls itself
     }

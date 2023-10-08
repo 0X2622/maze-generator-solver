@@ -17,22 +17,22 @@
 //3:Städa bort alla stora kommentarer, och lägg på minimalistiska självförklarande kommentarer för hela koden.
 //4: Skriv in namn, datum, osv på varje fil, komprimera och lämna in
 
+// kolla att mina includes makes sense, se om de någon include jag inte behöver
 
-// obs tekniskt sett kan ja skita i while-loopen o bara skapa objektet. Tror koden o programmet körs ändå o det är 
-// mindre komplext ? 
+
 int main() {
 
-	/*bool running = true; //boolean value that indicates that the program is running
-	
-	//while(true) makes the program run until the user explicitly chooses to terminate it through the startMenu of object
-	// menu. The purpose of this section is to shower the user how the program works and what conditions that needs to
-	// be met in order to terminate the program.
+	bool running = true; //boolean value that indicates that the program is running
+
+	// This loop will keep track of the inputValue of the generated object. If the user explicitly sets the
+	// inputvalue == 2 inside the start menu, then running == false and the iteration + program will terminate,
+	// while the input value is not == 2, the iteration will continue and create new objects.
+	// This will keep the program running until the user explicitly wants to terminate it.
 	while (running) {
 		menu startMenu;
 		if (startMenu.getInputVal() == 2) {
 			running = false;
 		}
-	}*/
-	menu startMenu;
+	}
 	return 0;
 }

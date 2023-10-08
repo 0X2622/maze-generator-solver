@@ -5,6 +5,7 @@
 #include <cstdlib> // for exit() to terminate the program
 #include <iomanip> // for setw() and left (kanske kan ta bort) -> tror inte ja använder detta.
 
+struct MazeNode;
 
 //interface of the main menu
 ////the class menu navigates the flow of the overallt program, have communications with other classes
