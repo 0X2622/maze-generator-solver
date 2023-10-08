@@ -44,23 +44,17 @@ void mazeGenerator::NodesGenerator(int mazeWidth, int mazeHeight)
 //within that wall, both for the start and end-nodes - resulting in two random positions.
 void mazeGenerator::maze_StartEndPOS()
 {
-
-
-
 	// source " https://cplusplus.com/reference/cstdlib/srand/ " 
 	// time() https://cplusplus.com/reference/ctime/time/
 	// source: srand and rand() https://www.geeksforgeeks.org/rand-and-srand-in-ccpp/
 	
-	// time() access the time in the computer. time(0) access the current time in second as an integer. 
-	// srand() is used to seed the pseudo-random number generator used by rand(), 
-	//to make sure that the numbers from rand() appear more random, we need to give it a different seed to each run.
-	// seed(time(0)) makes sure that the seed giving to rand is the current time on the system which will be different 
-	// for each excecution. making rand() appear more rand, and the start/end point of the maze more random as well.
+	// srand is needed to give the rand() function a seed that will make it appear more random,
+	// this is important to make sure that the node start and end position is more random. 
+	// time(0) gives the current time in the computer as an integer, which makes the seed different each time.
 	std::srand(std::time(0));
-
-	// 'rand()' returns a pseudo-random number in the range of [0, RAND_MAX], 'rand() % N' returns a number between [0, N-1],
-	// because 'rand() % N' means the remainder of the number given by 'rand()' divided by N which is always < N
-	// so rand() % 4 means a number X MOD 4 = Y such that Y = 0, 1, 2, or 3 which represents one of the 4 maze walls
+	
+	// returns a pseudo-random number between [0, RAND_MAX], 'rand() % 4' returns a number between [0, 3],
+	// which represents one of the 4 maze walls
 	int line = rand() % 4;  
 
 	//each case represnt one of the outer walls which will determine positions of the start and end-node
@@ -134,9 +128,7 @@ void mazeGenerator::DFS_Generator()
 {
 	
 	// this guard is needed because of the recursive nature of this DFS-algorithm, ensuring that the startNode is only
-	// pushed into the stack top once - during the first iteration only. 
-	// if startNode.visited == false, implies that the startNode has not been visited & that its the first iteration.
-	// if startNode.visited == true, implies it's not the first iteration and that the startNode does not need any handling.
+	// pushed into the stack top only once - during the first iteration only. 
 	if (this->startNode->getVisited() == false) {
 		this->mazeStack.push(this->startNode); //pushes the first startnode into the stack.
 		this->startNode->setVisited(true); //sets the startNode as visited by default.
@@ -147,7 +139,6 @@ void mazeGenerator::DFS_Generator()
 	// that needs to be analyzed and that the algorithm should keep iterating.
 	if (!this->mazeStack.empty()) {
 		
-		//pointer that keeps track of the last visited node.
 		// This pointer is used for referencing the last position when linking the node to a new adjacent neighbor
 		this->currentPos = mazeStack.top();
 		
@@ -156,8 +147,8 @@ void mazeGenerator::DFS_Generator()
 		this->y = currentPos->getCoordinatesSecond(); 
 		std::vector<MazeNode*> foundNeighboors = findNeighboors(); //returns a vector of unvisited neighbors to visit
 
-		//If unvisited neighboors = found -> randomly traverse to one of the neighboors and link it with current node,
-		// no unvisited neighbor = pop stack + backtrack
+		//If unvisited neighboors == found -> randomly traverse to one of the neighboors and link it with current node,
+		// no unvisited neighbor -> pop stack + backtrack
 		if (!foundNeighboors.empty()) {
 
 			//foundNeighboors is a vector that holds pointers to potential neighbors to visit. 
@@ -218,11 +209,8 @@ const std::vector<std::vector<MazeNode*>>& mazeGenerator::getMazeVector() const
 	return this->mazeVector;
 }
 
-//destructor. Since this class dynamically allocate mazenodes, they need to explicitly be deleted from the heap memory
-//when the object gets destroyed to avoid memory leaks. So everytime that the destructor is called, it uses a 
-// range based for loop, that iretares through all generated nodes in the mazeVector, and deletes them, after all nodes
-// for an entire row has been deleted, then that row vector will get cleared,
-// once all row vectors has been cleared, then the entire mazeVector can be cleared. OBS Check if cleared is necessary.
+//destructor. Since this class dynamically allocate mazenodes, they need to explicitly be deleted from the heap
+//when the object gets destroyed to avoid memory leaks. 
 mazeGenerator::~mazeGenerator()
 {
 	for (std::vector<MazeNode*>& mazeRow : this->mazeVector) { //fetches vectors that hold entire mazeRows.
