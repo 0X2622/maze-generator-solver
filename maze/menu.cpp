@@ -9,44 +9,34 @@ menu::menu()
 	this->startMenu();
 }
 
+// Function that handles the flow of the entire program. It can interact with the mazeGenerator to retrieve
+// the mazeVector (datastructure), and it can interact with the mazeDisplayer to pass the mazeVector.
+// this function also interacts with all necessary functions to create the maze
 void menu::startMenu()
 {
 	ScreenManipulation::mainMenuPrint(); //access screenoutput for mainmenu 
 
-	// the cursor will return to this marked point and not overwrite the visual menu content above when reloading the page.
+	// cursor will return to this marked point and not overwrite the visual menu content above when reloading
 	ScreenManipulation::SaveCursorPos();
-
-	this->Context = "StartMenu"; //saves the current contect of the program
-	this->errorMsg_Value = " 0, 1 or 2."; //sets the values that needs to be set by the user for this particular function
-
-	//user input has to be exactly 1.0 or 0.0 in order to use the program.
-	this->option2 = 1.0;
-	this->option1 = 0.0;
-
+	this->Context = "StartMenu"; //sets the current contect of the program to determine its behavior
+	this->errorMsg_Value = " 0, 1 or 2."; //Error msg: only acceptable input values for this function
 	input(); //start the input options that lets the user make an input
 
 	if (inputValue == 0) {
-		ScreenManipulation::ClearScreen(); //So that the new matrix print will be position at a blank screen at the top
-
-		//creates a mazeGenerator object by initating it's default ctr. The default ctr will create a maze by default
-		// size. 'mazeObj' will be a reference/alias to the generated object and thus refer to the same data,
-		//this reference can then be used to retrieve the maze Datastructure from the object and pass it into mazeDisplayer
-		const mazeGenerator& mazeObj = mazeGenerator(); //create referene to a default sized mazeObject
-		const std::vector<std::vector<MazeNode*>>& mazeVec = mazeObj.getMazeVector(); //create a reference to the mazeVector
+		ScreenManipulation::ClearScreen(); //So that the new matrix print will be position at a blank screen	
+		const mazeGenerator mazeObj; //creates a mazeGenerator-object that can access the maze datastructure
+		const std::vector<std::vector<MazeNode*>>& mazeVec = mazeObj.getMazeVector();//access the mazeVector
 		mazeDisplayer displayer(mazeVec); //pass the mazeVector into the class mazeDisplayer to print the maze
-		//inputValue = 0;
 	}
 	else if (inputValue == 1) {
 		ScreenManipulation::ClearScreen();
 		MazeMenu(); //starts the menu which lets the user to determine maze dimensions and create the maze
 		inputValue = 0; // reseting the input value to prevent termination of the program.
-		//initiate 2 parameter constructor with the specified user mazewidth and height and create a reference to that object
-		const mazeGenerator& mazeObj = mazeGenerator(mazeWidth, mazeHeight);
-		const std::vector<std::vector<MazeNode*>>& mazeVec = mazeObj.getMazeVector(); //create a reference to the mazeVector
+		const mazeGenerator mazeObj(mazeWidth, mazeHeight); //maze-object with userdefined dimensions
+		const std::vector<std::vector<MazeNode*>>& mazeVec = mazeObj.getMazeVector(); //access the mazevector
 		mazeDisplayer displayer(mazeVec); //pass the mazeVector into the class mazeDisplayer to print the maze
-		//inputValue = 0;
 	}
-	else if (inputValue == 2) { //inputValue == 2 will terminate the program.
+	else if (inputValue == 2) { //inputValue == 2 will make main.cpp terminate the program
 		std::cout << "Terminating program." << std::endl;
 		return;
 	}
@@ -56,8 +46,8 @@ void menu::startMenu()
 void menu::MazeMenu()
 {	
 	//sets the lower and upper limit for maze dimensions.
-	this->errorMsg_Value = "2 and 20";
-	this->option1 = 2;
+	this->errorMsg_Value = "2 and 24";
+	this->option1 = 2; //set the new values of option 1 && 2 for the MazeMenu. This is allowed range.
 	this->option2 = 24;
 	this->Context = "Dimension";
 	this->mazeWidth = InputMazeDim("Choose desired maze width: ");
@@ -79,7 +69,7 @@ int menu::InputMazeDim(std::string dimensionMsg)
 //impossible for a user to enter invalid values for the options of the program.
 void menu::input(){
 
-	//initially sets inital condition to false so that it can be set to true *only* if the input is of a correct type/or value
+	//initially sets inital condition to false so it can be set to true if the input is of a correct type/value
 	this->validInput = false; 
 
 	//while validInput == false, this function will keep iterate and ask user for a correct input type.

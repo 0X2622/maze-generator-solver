@@ -47,7 +47,7 @@ public:
 	void printMatrix(); //creates just the 2D matrix structure with it's cells, nodes and walls.
 	void printMaze(); //method that is used to print the complete generated maze.
 	void printHorisontalWall(); //prints a horrisontal wall over a complete mazeRow
-	void printMazeRow(const std::vector<MazeNode*>& mazeRow); //creates a complete maze/matrix row
+	void printRow(const std::vector<MazeNode*>& mazeRow); //creates a complete maze/matrix row
 	void analyzeRightPtr(MazeNode* MazeNode); //analyzes the right ptr of a node 
 	void analyzeDownPtr(const std::vector<MazeNode*> mazeRow);//analyzes the down ptr of a node
 	void DFS_MazeSolver(); // solves the maze by analyzing the node pointers and its links

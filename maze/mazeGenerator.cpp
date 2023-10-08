@@ -174,17 +174,6 @@ void mazeGenerator::DFS_Generator()
 	}
 }
 
-//section below handles the linking process between the new node pointed by mazeDirection and the previous node
-// pointed by currentPos. To be able to link the correct nodes, the coordinates of the newly visited nodes has
-// to be retrieved. To retrieve the coordinates of the newly visited node, we use the getter function
-// "getCoordinatesFirst" and "getCoordinatesSecond", where each of these getter functions will return one 
-// of the node coordinates of a particular node. In this case, that particular node is the node pointed by 
-// mazeDirection, which is the newly visited node. After the coordinates are retrieved by the getters, we check
-// where those coordinates are located from the perspective of the current (previous) node pointed by
-//currentPos. So x and y in these conditions will represent the node coordinates of the node pointed by 
-// currentPos, and thet statements checks where the newly visited node are located from the perspective of that
-// node.
-
 // this function link together two adjacent mazeNodes to create a path in the maze.
 // the nodes that are to be linked are the top 2 stack nodes (latest visited nodes),
 // two mazeNode pointers are passed as reference to avoid copying and save overhead.
@@ -236,12 +225,10 @@ const std::vector<std::vector<MazeNode*>>& mazeGenerator::getMazeVector() const
 // once all row vectors has been cleared, then the entire mazeVector can be cleared. OBS Check if cleared is necessary.
 mazeGenerator::~mazeGenerator()
 {
-	for (auto& mazeRow : this->mazeVector) { //fetches vectors that hold entire mazeRows.
-		for (auto& node : mazeRow) { //iterates through all nodes in the entire fetched fector
+	for (std::vector<MazeNode*>& mazeRow : this->mazeVector) { //fetches vectors that hold entire mazeRows.
+		for (MazeNode *& node : mazeRow) { //iterates through all nodes in the entire fetched fector
 			delete node; // Deallocates the memory for the node
 		}
-		mazeRow.clear(); // Clear the vector for this row once all nodes are deleted (maybe i can delete this shit?)
 	}
-	this->mazeVector.clear(); // Clear the outer vector
 }
 

@@ -13,7 +13,7 @@ void ScreenManipulation::flushBuffer()
 	}
 }
 
-void ScreenManipulation::SaveCursorPos() { std::cout << "\033[s"; }
+void ScreenManipulation::SaveCursorPos() { std::cout << "\033[s"; } //saves the cursor position
 void ScreenManipulation::ClearScreen() { std::cout << "\033[2J\033[1;1H"; }	// Clears entire screen and 1;1H moves the cursor up to row 1 column 1. 
 void ScreenManipulation::ClearLine() { std::cout << "\033[2K"; } //clears the entire current line from previous output
 void ScreenManipulation::RestoreAndClear() { std::cout << "\033[u" << "\033[K"; }//restores cursor pos & then clears line of previous output
