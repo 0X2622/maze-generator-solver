@@ -22,7 +22,7 @@
 // mindre komplext ? 
 int main() {
 
-	bool running = true; //boolean value that indicates that the program is running
+	/*bool running = true; //boolean value that indicates that the program is running
 	
 	//while(true) makes the program run until the user explicitly chooses to terminate it through the startMenu of object
 	// menu. The purpose of this section is to shower the user how the program works and what conditions that needs to
@@ -32,6 +32,7 @@ int main() {
 		if (startMenu.getInputVal() == 2) {
 			running = false;
 		}
-	}
+	}*/
+	menu startMenu;
 	return 0;
 }
