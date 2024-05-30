@@ -6,15 +6,15 @@
 // and maze end positions and lastly creates a DFS maze path based on these previous generated data structures.
 mazeGenerator::mazeGenerator() : mazeWidth(6), mazeHeigth(6)
 {
-	this->NodesGenerator(mazeWidth, mazeHeigth); 
-	this->maze_StartEndPOS();
+	this->nodesGenerator(mazeWidth, mazeHeigth); 
+	this->startEndPOS();
 	this->DFS_Generator();
 }
 
 mazeGenerator::mazeGenerator(int MazeWidth, int MazeHeight) : mazeWidth(MazeWidth), mazeHeigth(MazeHeight)
 {
-	this->NodesGenerator(mazeWidth, mazeHeigth);
-	this->maze_StartEndPOS();
+	this->nodesGenerator(mazeWidth, mazeHeigth);
+	this->startEndPOS();
 	this->DFS_Generator();
 }
 
@@ -23,7 +23,7 @@ mazeGenerator::mazeGenerator(int MazeWidth, int MazeHeight) : mazeWidth(MazeWidt
 // Every generated mazeRow-vector will be pushed into the outer 2D vector 'mazeVector' which represents the maze.
 // mazeWidth and mazeHeight makes sure that the dimensions (amount of mazeRows) are correct,
 // the outer vector can be seen as amount of mazeRows, and the inner vector can be seen as the amount of nodes (columns)
-void mazeGenerator::NodesGenerator(int mazeWidth, int mazeHeight)
+void mazeGenerator::nodesGenerator(int mazeWidth, int mazeHeight)
 {
 	//the outer iteration makes sure that we create the right amount of row-vectors.
 	//the nested loop make sure that we create enough nodes (columns) for each row-vector
@@ -42,7 +42,7 @@ void mazeGenerator::NodesGenerator(int mazeWidth, int mazeHeight)
 //walls. rand() together with srand() will be used to generate a random number between 0 and 3, which will determine
 //which walls to set the start and end-node. once a wall is chosen, rand() will be used again to set a random position
 //within that wall, both for the start and end-nodes - resulting in two random positions.
-void mazeGenerator::maze_StartEndPOS()
+void mazeGenerator::startEndPOS()
 {
 	// source " https://cplusplus.com/reference/cstdlib/srand/ " 
 	// time() https://cplusplus.com/reference/ctime/time/

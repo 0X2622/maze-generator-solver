@@ -39,13 +39,14 @@ void ScreenManipulation::restorePosition()
 	std::cout << "\033[u";
 }
 
+// moves the cursor left 3 columns
 void ScreenManipulation::smallStepLeft()
 {
 	std::cout << "\033[3D";
 }
 
 // 2A moves the cursor upp one row in the maze. 3D moves the cursor left 3 columns which is needed to keep the 
-// traveling direction up straight
+// traveling direction up straight, since the operation of traveling just up also moves the cursor to the right
 void ScreenManipulation::StepUp()
 {
 	std::cout << "\033[2A" << "\033[3D"; //move cursor up one level
@@ -57,13 +58,14 @@ void ScreenManipulation::StepDown()
 	std::cout << "\033[2B" << "\033[3D";
 }
 
-// moves the cursor left one step which equals to the traveling distance from one cell to another
+// moves the cursor left one step which equals to the traveling distance from one maze-cell to another
 // for some reason, 9 column steps had to be taken here, the reason is yet unknown but it was the number that made it work.
 void ScreenManipulation::StepLeft()
 {
 	std::cout << "\033[9D";
 }
 
+// stepping righ 3 columns.
 void ScreenManipulation::StepRight()
 {
 	//std::cout << "   ";
