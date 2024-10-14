@@ -9,33 +9,40 @@
 class menu {
 private:
 
-	//maze dimensions
-	int mazeWidth;
-	int mazeHeight;
+	// used for allowed ranges for maze dimension. Not mutable.
+	const int MazeLowLimit = 2; 
+	const int MazeHighLimit = 20;
 
-	double inputValue; //will be used for all inputs for the different menus.
-	double option1 = 0.0; //control value for the first menu option
-	double option2 = 1.0; //control value for the second menu option.
-	double option3 = 2.0; //option for terminating the program
+	//values for the main menu options. Not mutable.
+	const double MenuOptionOne = 0.0; 
+	const double MenuOptionTwo = 1.0; 
+	const double TerminateProgram = 2.0; 
+
+	//maze dimensions
+	int MazeWidth;
+	int MazeHeight;
+
+	double UserInput; //will be used for all inputs for the different menus.
 	std::string Context; // sets the context of the program to determine its behaivor
 
 	// boolean used for errorcheck validation. Initial condition == false so that it can be set to true
 	// only if the user input is of a correct type or value
-	bool validInput = false;
-	int int_errorFlagBit; // data that will give information about the input. 0 == error, 1 == no error
+	bool ValidInput = false;
 	
 	//errorMessages used for wrong input value & type
-	std::string errorMsg_Value; //when the user makes an invalid value for an option.
-	std::string errorMsg_TYPE = "Error: Invalid input type. Make sure to input an integer type."; 
+	std::string AllowedRange; //error string that is used to show allowed input values for the user
+	const std::string INVALID_TYPE = "Error: Invalid input type. Use an integer."; //error string
+	const std::string INVALID_RANGE = "Error: Invalid range. Use an integer between the values "; //error string
+	int ERROR_BIT; // data that will give information about the input. 0 == error, 1 == no error
 
 public:
 	menu(); //default constructor 
 	void startMenu(); //that menu that contains visual interface & start flow of the program
-	void MazeMenu();
-	int InputMazeDim(std::string dimension);
+	void MazeMenu(); //starts logik for setting maze dimensions
+	int InputMazeDim(std::string dimension); // setting maze dimensions
 	void input(); //method used for validating user input
 	bool inputErrorCheck(); //errorCheck method based on user input
-	double getInputVal();
+	double GetUserInput(); //getter to terminate the program if value 2 is entered
 	~menu(); //destructor (kolla om jag verkligen ska lämna detta default eller inte)
 };
 #endif // !MENU_H

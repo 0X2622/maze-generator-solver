@@ -2,15 +2,15 @@
 #include <cstdlib>  // used for srand() and rand()
 #include <ctime>    // used for time()
 
-//default ctr that sets the matrix dimensions, call the node generator with the given dimensions, sets the maze start
-// and maze end positions and lastly creates a DFS maze path based on these previous generated data structures.
+// default CTR
 mazeGenerator::mazeGenerator() : mazeWidth(6), mazeHeigth(6)
 {
-	this->nodesGenerator(mazeWidth, mazeHeigth); 
-	this->startEndPOS();
-	this->DFS_Generator();
+	this->nodesGenerator(mazeWidth, mazeHeigth); // generates nodes and the 6x6 matrix
+	this->startEndPOS(); //sets start and end position for two nodes
+	this->DFS_Generator(); //generates the maze by linking nodes with the DFS algorithm 
 }
 
+// 2 parameter CTR - same functionality as default CTR with the exception that MazeWidth and MazeHeight will be different
 mazeGenerator::mazeGenerator(int MazeWidth, int MazeHeight) : mazeWidth(MazeWidth), mazeHeigth(MazeHeight)
 {
 	this->nodesGenerator(mazeWidth, mazeHeigth);
@@ -18,23 +18,25 @@ mazeGenerator::mazeGenerator(int MazeWidth, int MazeHeight) : mazeWidth(MazeWidt
 	this->DFS_Generator();
 }
 
-// This function creates the entire datastructure of maze by creating all mazeRows and all nodes inside it
-// Each induvidual mazeRow will be represented as a vector that holds pointers to created mazeNodes,
-// Every generated mazeRow-vector will be pushed into the outer 2D vector 'mazeVector' which represents the maze.
-// mazeWidth and mazeHeight makes sure that the dimensions (amount of mazeRows) are correct,
-// the outer vector can be seen as amount of mazeRows, and the inner vector can be seen as the amount of nodes (columns)
+
+// Generates the 2D Matrix and datastructure of the maze with given user dimensions. 
+// The matrix have two vectors - one outer vector that holds multiple vectors of node pointers,
+// The single outer vector represents the amount of rows in the matrix,
+// and each inner vector represents the amount of columns (nodes) for a given maze row,
+// each node have individual coordinates in the entire matrix
+// in other words - every single maze row is an entire vector of node pointers
 void mazeGenerator::nodesGenerator(int mazeWidth, int mazeHeight)
 {
-	//the outer iteration makes sure that we create the right amount of row-vectors.
-	//the nested loop make sure that we create enough nodes (columns) for each row-vector
+	//outer iteration makes sure that the outer vector have right amount of rows
+	//the nested loop make sure that each inner vector have the right amount of nodes (columns) 
 	for (int xC = 0; xC < mazeHeight; xC++) { 
-		std::vector<MazeNode*> mazeRow; // creates the Row-vector or nodePointers
-		for (int yC = 0; yC < mazeWidth; yC++) {//every iteration equals to the construction of one node & pointer
-			std::pair<int, int>Coordinates = std::make_pair(xC, yC); //node coordinates of the iteration values
-			MazeNode* const nodePtr = new MazeNode(Coordinates); //dynamically allocates a node and a pointer
-			mazeRow.push_back(nodePtr); //pushes the nodePtr to the Row-vector
+		std::vector<MazeNode*> MazeRow; // creates one vector of pointers to a single maze row
+		for (int yC = 0; yC < mazeWidth; yC++) {//every single iteration equals to the construction of one node & pointer
+			std::pair<int, int>Coordinates = std::make_pair(xC, yC); //node coordinates is equal to the iteration values
+			MazeNode* NodePtr = new MazeNode(Coordinates); //dynamically allocates a node and a pointer towards its memory
+			MazeRow.push_back(NodePtr); //pushes the Node Pointer to the vector of pointers
 		}
-		this->mazeVector.push_back(mazeRow); //Pushes the Row-vector to the 2D mazeVector
+		this->MazeVector.push_back(MazeRow); //Pushes the entire vector of node pointers to the outer vector
 	}	
 }
 
@@ -60,21 +62,21 @@ void mazeGenerator::startEndPOS()
 	//each case represnt one of the outer walls which will determine positions of the start and end-node
 	switch (line) {
 	case 0: // up = startLine (first row)
-		this->startNode = mazeVector[0][rand() % mazeWidth]; //random column for the upper row
-		this->endNode = mazeVector[mazeHeigth - 1][rand() % mazeWidth]; //random column for the bottom row
+		this->startNode = MazeVector[0][rand() % mazeWidth]; //random column for the upper row
+		this->endNode = MazeVector[mazeHeigth - 1][rand() % mazeWidth]; //random column for the bottom row
 		break;
 	case 1: // left = startLine (first column)
-		this->startNode = mazeVector[rand() % mazeHeigth][0]; //random node leftest col
-		this->endNode = mazeVector[rand() % mazeHeigth][mazeWidth - 1]; //random node rightest col
+		this->startNode = MazeVector[rand() % mazeHeigth][0]; //random node leftest col
+		this->endNode = MazeVector[rand() % mazeHeigth][mazeWidth - 1]; //random node rightest col
 		break;
 	case 2: // down = startLine (last row)
-		this->startNode = mazeVector[mazeHeigth - 1][rand() % mazeWidth]; //random node lowest row
-		this->endNode = mazeVector[0][rand() % mazeWidth]; //random node uppest row
+		this->startNode = MazeVector[mazeHeigth - 1][rand() % mazeWidth]; //random node lowest row
+		this->endNode = MazeVector[0][rand() % mazeWidth]; //random node uppest row
 
 		break;
 	case 3: // right = startLine (last column)
-		this->startNode = mazeVector[rand() % mazeHeigth][mazeWidth - 1]; //random node rightest col
-		this->endNode = mazeVector[rand() % mazeHeigth][0]; //random node leftest col
+		this->startNode = MazeVector[rand() % mazeHeigth][mazeWidth - 1]; //random node rightest col
+		this->endNode = MazeVector[rand() % mazeHeigth][0]; //random node leftest col
 		break;
 	default:
 		break;
@@ -96,23 +98,23 @@ std::vector<MazeNode*> mazeGenerator::findNeighboors()
 		//up check:
 		//if the position above (x,y) is within the maze boundaire (and thus have a node) and if the node at that position
 		// is not yet visited:
-		if (x - 1 >= 0 && mazeVector[x-1][y]->getVisited() == false) {
-			foundNeighboors.push_back(mazeVector[x-1][y]); //pushes back nodepointer to the vector
+		if (x - 1 >= 0 && MazeVector[x-1][y]->getVisited() == false) {
+			foundNeighboors.push_back(MazeVector[x-1][y]); //pushes back nodepointer to the vector
 		}
 
 		//right check:
-		if (y + 1 <= mazeWidth - 1 && mazeVector[x][y + 1]->getVisited() == false) {
-			foundNeighboors.push_back(mazeVector[x][y + 1]);
+		if (y + 1 <= mazeWidth - 1 && MazeVector[x][y + 1]->getVisited() == false) {
+			foundNeighboors.push_back(MazeVector[x][y + 1]);
 		}
 
 		//down check:
-		if (x + 1 <= mazeHeigth - 1 && mazeVector[x + 1][y]->getVisited() == false) {
-			foundNeighboors.push_back(mazeVector[x + 1][y]);
+		if (x + 1 <= mazeHeigth - 1 && MazeVector[x + 1][y]->getVisited() == false) {
+			foundNeighboors.push_back(MazeVector[x + 1][y]);
 		}
 
 		//left check: 
-		if (y - 1 >= 0 && mazeVector[x][y - 1]->getVisited() == false) {
-			foundNeighboors.push_back(mazeVector[x][y - 1]);
+		if (y - 1 >= 0 && MazeVector[x][y - 1]->getVisited() == false) {
+			foundNeighboors.push_back(MazeVector[x][y - 1]);
 		}
 
 	// return the vector with pointers to unvisited neighbors
@@ -206,14 +208,14 @@ void mazeGenerator::linkNodes(MazeNode*& const mazeDirection, MazeNode*& const c
 //and pass it around to other objects as a first class citizen. Const makes sure the data is not modifiable.
 const std::vector<std::vector<MazeNode*>>& mazeGenerator::getMazeVector() const
 {
-	return this->mazeVector;
+	return this->MazeVector;
 }
 
 //destructor. Since this class dynamically allocate mazenodes, they need to explicitly be deleted from the heap
 //when the object gets destroyed to avoid memory leaks. 
 mazeGenerator::~mazeGenerator()
 {
-	for (std::vector<MazeNode*>& mazeRow : this->mazeVector) { //fetches vectors that hold entire mazeRows.
+	for (std::vector<MazeNode*>& mazeRow : this->MazeVector) { //fetches vectors that hold entire mazeRows.
 		for (MazeNode *& node : mazeRow) { //iterates through all nodes in the entire fetched fector
 			delete node; // Deallocates the memory for the node
 		}

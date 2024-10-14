@@ -6,7 +6,7 @@
 // The object 'menu' is what will navigate the entire flow of the program, by providing a an initial visual interface,
 // and communication with other classes that lets the user to use the program effectively.
 
-int main() {
+int main(){
 
 	bool running = true; //boolean value that indicates that the program is running
 
@@ -16,7 +16,7 @@ int main() {
 	// This will keep the program running until the user explicitly wants to terminate it.
 	while (running) {
 		menu startMenu;
-		if (startMenu.getInputVal() == 2) {
+		if (startMenu.GetUserInput() == 2) {
 			running = false;
 		}
 	}

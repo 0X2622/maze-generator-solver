@@ -27,8 +27,8 @@ private:
 	
 	//dimensions of the maze which will be set by the default constructor.
 	//in a more elaborate version of this application these values will be set by user input during runtime.
-	int mazeWidth;
-	int mazeHeigth;
+	const int mazeWidth;
+	const int mazeHeigth;
 
 	MazeNode* startNode; //pointer to access the maze startNode 
 	MazeNode* endNode;//pointer to access the maze endNode
@@ -40,7 +40,7 @@ private:
 	
 	//the 2D matrix vector that will contain the whole maze datastructure.
 	// The outer vector represent all matrix rows, while each inner vector represents all columns
-	std::vector<std::vector<MazeNode*>> mazeVector; 
+	std::vector<std::vector<MazeNode*>> MazeVector; 
 };
 
 #endif // !MAZE_H
